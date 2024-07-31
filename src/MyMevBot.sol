@@ -30,12 +30,19 @@ contract MyMevBot {
 
     function performArbitrage() public {
         // your code here
+        IUniswapV3Pool(flashLenderPool).flash(address(this), 1000 * 1e6, 0, new bytes(0));
     }
 
     function uniswapV3FlashCallback(uint256 _fee0, uint256, bytes calldata data) external {
         callMeCallMe();
 
         // your code start here
+        address[] memory path = new address[](4);
+        (path[0], path[1], path[2], path[3]) = (usdc, weth, usdt, usdc);
+        IERC20(usdc).approve(router, 1000 * 1e6);
+
+        IUniswapV2Router(router).swapExactTokensForTokens(1000 * 1e6, 0, path, address(this), block.timestamp);
+        IERC20(usdc).transfer(flashLenderPool, 1000 * 1e6 + _fee0);
     }
 
     function callMeCallMe() private {

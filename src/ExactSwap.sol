@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/IERC20.sol";
 
+import {Test, console2} from "forge-std/Test.sol";
+
 contract ExactSwap {
     /**
      *  PERFORM AN SIMPLE SWAP WITHOUT ROUTER EXERCISE
@@ -22,7 +24,18 @@ contract ExactSwap {
          *     to: recipient address to receive the USDC tokens.
          *     data: leave it empty.
          */
+        uint256 amountOut = 1337 * 1e6;
+        (uint256 r0, uint256 r1,) = IUniswapV2Pair(pool).getReserves();
+        uint256 k = r0 * r1;
 
-        // your code start here
+        uint256 new_r0 = r0 - amountOut;
+        uint256 amountIn = (k / new_r0) - r1;
+        ++amountIn;
+
+        amountIn = (amountIn * 1000) / 997;
+        ++amountIn;
+
+        IERC20(weth).transfer(pool, amountIn);
+        IUniswapV2Pair(pool).swap(amountOut, 0, address(this), new bytes(0));
     }
 }

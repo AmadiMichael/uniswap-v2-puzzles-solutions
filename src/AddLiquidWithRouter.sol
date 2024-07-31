@@ -20,6 +20,8 @@ contract AddLiquidWithRouter {
 
     function addLiquidityWithRouter(address usdcAddress, uint256 deadline) public {
         // your code start here
+        IUniswapV2Pair(usdcAddress).approve(router, 1000 * 10e6);
+        IUniswapV2Router(router).addLiquidityETH{value: 0.3 ether}(usdcAddress, 1000 * 10e6, 0, 0, msg.sender, deadline);
     }
 
     receive() external payable {}

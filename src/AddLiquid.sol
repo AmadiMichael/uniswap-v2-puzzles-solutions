@@ -14,6 +14,12 @@ contract AddLiquid {
      */
     function addLiquidity(address usdc, address weth, address pool, uint256 usdcReserve, uint256 wethReserve) public {
         IUniswapV2Pair pair = IUniswapV2Pair(pool);
+        IUniswapV2Pair _usdc = IUniswapV2Pair(usdc);
+        IUniswapV2Pair _weth = IUniswapV2Pair(weth);
+
+        _usdc.transfer(pool, 1000 * 10 ** 6);
+        _weth.transfer(pool, 1 ether);
+        pair.mint(msg.sender);
 
         // your code start here
 
